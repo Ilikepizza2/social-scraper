@@ -18,7 +18,7 @@ let header = {
   "User-Agent": `${user_agent}`,
 };
 
-app.get("/api/reddit/:subreddit", (req, res) => {
+app.get("/api/reddit/subreddit/:subreddit", (req, res) => {
   const subreddit = req.params.subreddit;
   const url = `https://old.reddit.com/r/${subreddit}/top/`;
   axios(url, header)
@@ -45,6 +45,34 @@ app.get("/api/reddit/:subreddit", (req, res) => {
     .catch(console.error);
 });
 
+app.get("/api/reddit/tags/:tag", (req, res) => {
+  const tag = req.params.tag;
+  const url = `https://old.reddit.com/search/?q=${tag}&include_over_18=off&t=all&sort=top`
+  console.log(url)
+  axios(url, header)
+    .then((response) => {
+      const html = response.data;
+      const $ = cheerio.load(html);
+      const reddit = [];
+      // console.log(html)
+      $("div.contents > div.search-result-link").each(function () {
+        const title = $(this).find("a.search-title").text();
+        const url = $(this).find("a.search-title").attr("href");
+        const author = $(this).find("a.author").text();
+        const score = $(this).find("div.score.unvoted").text();
+        reddit.push({
+          title,
+          url,
+          author,
+          score,
+        });
+      });
+      res.json(reddit);
+    })
+    .catch(console.error);
+})
+
+// return trending videos of youtube (NOT WORKING)
 app.get("/api/youtube/trending", (req, res) => {
   const query = req.params.query;
   const url = `https://www.youtube.com/feed/trending`;
@@ -75,6 +103,31 @@ app.get("/api/youtube/trending", (req, res) => {
       });
 
       res.json(youtube);
+    })
+    .catch(console.error);
+});
+
+// return the search results of twitter (NOT WORKING)
+app.get("/api/twitter/:query", (req, res) => {
+  const query = req.params.query;
+  const url = `https://twitter.com/search?q=${query}`;
+  axios(url, header)
+    .then((response) => {
+      const html = response.data;
+      const $ = cheerio.load(html);
+      const twitter = [];
+      // console.).html())
+      console.log($.html())
+      $('[data-testid=tweetText]').each(function () {
+        const title = "";
+        $(this > span).each(function () {
+          title += $(this).text();
+        });
+        twitter.push({
+          title,
+        });
+      });
+      res.json(twitter);
     })
     .catch(console.error);
 });
