@@ -157,7 +157,7 @@ app.get("/api/duckduckgo/:query", (req, res) => {
 });
 
 // return the search results of stackoverflow
-app.get("/api/stackoverflow/:query", (req, res) => {
+app.get("/api/stackoverflow/search/:query", (req, res) => {
   const query = req.params.query;
   const url = `https://stackoverflow.com/search?q=${query}`;
   axios(url, header)
@@ -167,7 +167,7 @@ app.get("/api/stackoverflow/:query", (req, res) => {
       const stackoverflow = [];
       $("div.js-post-summary").each(function () {
         const title = $(this).find("h3 > a").text();
-        const url = $(this).find("h3 > a").attr("href");
+        const url = "https://stackoverflow.com"+$(this).find("h3 > a").attr("href");
         const description = $(this).find("div.excerpt").text();
         stackoverflow.push({
           title,
@@ -189,9 +189,10 @@ app.get("/api/stackoverflow/tags/:query", (req, res) => {
       const html = response.data;
       const $ = cheerio.load(html);
       const stackoverflow = [];
+      console.log($("div.js-post-summary").length)
       $("div.js-post-summary").each(function () {
         const title = $(this).find("h3 > a").text();
-        const url = $(this).find("h3 > a").attr("href");
+        const url = "https://stackoverflow.com"+$(this).find("h3 > a").attr("href");
         const description = $(this).find("div.excerpt").text();
         stackoverflow.push({
           title,
