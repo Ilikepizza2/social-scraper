@@ -1,6 +1,12 @@
 const axios = require("axios");
 const cheerio = require("cheerio");
 const app = require("express")();
+const cors = require("cors");
+app.use(cors(
+  {
+    origin: "*",
+  }
+));
 const selectRandom = () => {
   const userAgents = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36",
@@ -156,29 +162,30 @@ app.get("/api/duckduckgo/:query", (req, res) => {
     .catch(console.error);
 });
 
-// return the search results of stackoverflow
-app.get("/api/stackoverflow/search/:query", (req, res) => {
-  const query = req.params.query;
-  const url = `https://stackoverflow.com/search?q=${query}`;
-  axios(url, header)
-    .then((response) => {
-      const html = response.data;
-      const $ = cheerio.load(html);
-      const stackoverflow = [];
-      $("div.js-post-summary").each(function () {
-        const title = $(this).find("h3 > a").text();
-        const url = "https://stackoverflow.com"+$(this).find("h3 > a").attr("href");
-        const description = $(this).find("div.excerpt").text();
-        stackoverflow.push({
-          title,
-          url,
-          description,
-        });
-      });
-      res.json(stackoverflow);
-    })
-    .catch(console.error);
-});
+// // return the search results of stackoverflow
+// app.get("/api/stackoverflow/search/:query", (req, res) => {
+//   const query = req.params.query;
+//   const url = `https://stackoverflow.com/search?q=${query}`;
+//   axios(url, header)
+//     .then((response) => {
+//       const html = response.data;
+//       const $ = cheerio.load(html);
+//       const stackoverflow = [];
+//       console.log($('div.js-post-summary').length)
+//       $("div.js-post-summary").each(function () {
+//         const title = $(this).find("h3 > a").text();
+//         const url = "https://stackoverflow.com"+$(this).find("h3 > a").attr("href");
+//         const description = $(this).find("div.excerpt").text();
+//         stackoverflow.push({
+//           title,
+//           url,
+//           description,
+//         });
+//       });
+//       res.json(stackoverflow);
+//     })
+//     .catch(console.error);
+// });
 
 // return the search results of stackoverflow tags
 app.get("/api/stackoverflow/tags/:query", (req, res) => {
